@@ -12,7 +12,7 @@
 *                                                                                                       
 * Date          Author          Change Id       Release         Description Of Change                   
 * ----------    --------------- ---------       -------         -----------------------------------      
-* 27-01-2025    Tiago Rodrigues                       1         Creation of the repository
+* 27-01-2025    Tiago Rodrigues                       1         Creation of the repository and changes to prototypes
 *                                                                                                       
 *
 *
@@ -115,7 +115,7 @@ void give_node_value(void* node, void *value1, uint64_t size_of_datatype);
 * ARGUMENTS:
 *
 * ARGUMENT 	        TYPE	        I/O	DESCRIPTION
-* head	                void**	        I/O	pointer to the memory position of the head of the list
+* linked_list_node      void**	        I/O	pointer to the memory position of a node in the list
 * node                  void*	        I	pointer to the memory position of the node to add to the list
 *
 * RETURNS: void
@@ -123,7 +123,7 @@ void give_node_value(void* node, void *value1, uint64_t size_of_datatype);
 *
 *
 *****************************************************************/
-void add_node_to_head(void** head, void* node);
+void add_node_to_head(void** linked_list_node, void* node);
 
 
 
@@ -136,7 +136,7 @@ void add_node_to_head(void** head, void* node);
 * ARGUMENTS:
 *
 * ARGUMENT 	        TYPE	        I/O	DESCRIPTION
-* head	                void**	        I/O	pointer to the memory position of the head of the list
+* linked_list_node      void**	        I/O	pointer to the memory position of a node in the list
 * node                  void*	        I	pointer to the memory position of the node to add to the list
 *
 * RETURNS: void
@@ -144,28 +144,28 @@ void add_node_to_head(void** head, void* node);
 *
 *
 *****************************************************************/
-void add_node_to_tail(void** head, void* node);                  // ** needed in case head in null
+void add_node_to_tail(void** linked_list_node, void* node);                  // ** needed in case head in null
 
 
 /******************************************************************
 *
 * FUNCTION NAME: add_node_in_index_n       
 *
-* PURPOSE: Adds a node to index n of a linked list
+* PURPOSE: Adds a node to index n compared to given node of a linked list
 *
 * ARGUMENTS:
 *
 * ARGUMENT 	        TYPE	        I/O	DESCRIPTION
-* head	                void**	        I/O	pointer to the memory position of the head of the list
+* linked_list_node      void**	        I/O	pointer to the memory position of a node in the list
 * node                  void*	        I	pointer to the memory position of the node to add to the list
-* position              uint64_t        I       position to add node to the linked list
+* position              int64_t         I       position to add node to the linked list
 *
 * RETURNS: void
 *
 *
 *
 *****************************************************************/
-void add_node_in_index_n(void** head, void* node, uint64_t position);
+void add_node_in_index_n(void** linked_list_node, void* node, int64_t position);
 
 
 /******************************************************************
@@ -177,7 +177,7 @@ void add_node_in_index_n(void** head, void* node, uint64_t position);
 * ARGUMENTS:
 *
 * ARGUMENT 	        TYPE	        I/O	DESCRIPTION
-* head	                void**	        I/O	pointer to the memory position of the head of the list
+* linked_list_node	void**	        I/O	pointer to the memory position a node in the linked list
 *
 *
 * RETURNS: void
@@ -185,7 +185,7 @@ void add_node_in_index_n(void** head, void* node, uint64_t position);
 *
 *
 *****************************************************************/
-void remove_head_node(void** head);
+void remove_head_node(void** linked_list_node);
 
 /******************************************************************
 *
@@ -196,7 +196,7 @@ void remove_head_node(void** head);
 * ARGUMENTS:
 *
 * ARGUMENT 	        TYPE	        I/O	DESCRIPTION
-* head	                void**	        I/O	pointer to the memory position of the head of the list
+* linked_list_node	void**	        I/O	pointer to the memory position a node in the linked listt
 *
 *
 * RETURNS: void
@@ -204,26 +204,26 @@ void remove_head_node(void** head);
 *
 *
 *****************************************************************/
-void remove_tail_node(void** head);
+void remove_tail_node(void** linked_list_node);
 
 /******************************************************************
 *
 * FUNCTION NAME: remove_node_in_index_n       
 *
-* PURPOSE: removes node at index n of a linked list
+* PURPOSE: removes node at index n compared to given node of a linked list
 *
 * ARGUMENTS:
 *
 * ARGUMENT 	        TYPE	        I/O	DESCRIPTION
-* head	                void**	        I/O	pointer to the memory position of the head of the list
-* position              uint64_t        I       position to remove node in the linked list
+* linked_list_node	void**	        I/O	pointer to the memory position a node in the linked list
+* position              int64_t         I       position to remove node in the linked list
 *
 * RETURNS: void
 *
 *
 *
 *****************************************************************/
-void remove_node_in_index_n(void** head, uint64_t position);
+void remove_node_in_index_n(void** linked_list_node, int64_t position);
 
 /******************************************************************
 *
@@ -326,20 +326,20 @@ void* get_value(void* node);
 *
 * FUNCTION NAME: get_value_in_index_n       
 *
-* PURPOSE: Returns the memory position of the value that is currently in the node in index n
+* PURPOSE: Returns the memory position of the value that is currently in the node in index n compared to given node
 *
 * ARGUMENTS:
 *
 * ARGUMENT 	        TYPE	        I/O	DESCRIPTION
-* head	                void*	        I	pointer to the memory position of the head of the list
-* position              uint64_t        I       position of the node to return value
+* linked_list_node	void**	        I/O	pointer to the memory position a node in the linked list
+* position              int64_t         I       position of the node to return value
 *
 * RETURNS: void* (pointer to the memory position of the value in the node at index n)
 *
 *
 *
 *****************************************************************/
-void* get_value_in_index_n(void* head, uint64_t n);
+void* get_value_in_index_n(void* linked_list_node, int64_t n);
 
 // void print_list(void* head);
 
@@ -353,7 +353,7 @@ void* get_value_in_index_n(void* head, uint64_t n);
 * ARGUMENTS:
 *
 * ARGUMENT 	        TYPE	        I/O	DESCRIPTION
-* head	                void**	        I/O	pointer to the memory position of the head of the list
+* linked_list_node	void**	        I/O	pointer to the memory position a node in the linked list
 *
 *
 * RETURNS: void
@@ -361,7 +361,7 @@ void* get_value_in_index_n(void* head, uint64_t n);
 *
 *
 *****************************************************************/
-void free_linked_list(void** head);
+void free_linked_list(void** linked_list_node);
 
 
 /*****************************************************/

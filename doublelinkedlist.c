@@ -1,7 +1,7 @@
 /*******************************************************************************************************************
 * FILE NAME: doublelinkedlist.c
 *                                                                                                               
-* PURPOSE: This file implements all the functions needed for the creation and modification of a single linked list
+* PURPOSE: This file implements all the functions needed for the creation and modification of a doubly linked list
 *                                                                                                               
 * FILE REFERENCES:                                                                                              
 *                                                                                                               
@@ -42,10 +42,10 @@
 *                                                                                                               
 * Date          Author                  Change Id       Release         Description Of Change                   
 * ----------    ---------------         ---------       -------         ---------------------   
-* 27-10-2024    Tiago Rodrigues                         0               Prolog start and coding of a function
-* 28-10-2024    Tiago Rodrigues                         0               Added prolog to functions 
-* 24-01-2025    Tiago Rodrigues                         0               Changed all operations to use void *
-* 25-01-2025    Tiago Rodrigues                         0               New operations implemented
+* 27-01-2025    Tiago Rodrigues                               1         Creation of the repository as well 
+*                                                                        as implementation of functions and
+*                                                                        update of functions from singly linked list
+*
 *                                                                                                              
 * ALGORITHM (PDL)
 *    
@@ -97,6 +97,7 @@ struct node
         // uint64_t size_of_datatype;                   not needed, unless trying to make a multi value linked list
         void* data;
         struct node* next;
+        struct node* previous;
 };
 
 
@@ -119,7 +120,7 @@ struct node
 *
 * FUNCTION NAME: create_node       
 *
-* PURPOSE: Allocates the needed memory for a node of the singly linked list
+* PURPOSE: Allocates the needed memory for a node of the doubly linked list
 *
 * ARGUMENTS:
 *
@@ -146,6 +147,7 @@ void create_node(void** node)
                 return ;
         }
         (*(struct node **)(node))->next = NULL;
+        (*(struct node **)(node))->previous = NULL;
         return ;
 }
 
@@ -203,7 +205,7 @@ void give_node_value(void* node, void *value1, uint64_t size_of_datatype)
 * ARGUMENTS:
 *
 * ARGUMENT 	        TYPE	        I/O	DESCRIPTION
-* head	                void**	        I/O	pointer to the memory position of the head of the list
+* linked_list_node      void**	        I/O	pointer to the memory position of a node in the list
 * node                  void*	        I	pointer to the memory position of the node to add to the list
 *
 * RETURNS: void
@@ -211,26 +213,40 @@ void give_node_value(void* node, void *value1, uint64_t size_of_datatype)
 *
 *
 *****************************************************************/
-void add_node_to_head(void** head, void* node)
+void add_node_to_head(void** linked_list_node, void* node)
 {
         /* LOCAL VARIABLES:
-        *  Variable        Type    Description
-        *  --------        ----    -----------
-        *  None
+        *  Variable     Type            Description
+        *  --------     ----            -----------
+        *  aux_ptr      struct node*    auxiliary node to walk through the list      
         */
-        if(NULL == (*head))
+        if(NULL == (*linked_list_node))
         {
-                head = node;
+                linked_list_node = node;
                 return;
         }
-        if(NULL == node)
+        else if(NULL == node)
         {
                 return;
         }
+        else if(NULL == get_previous_node((*linked_list_node)))               // given node is head
+        {
+                ((struct node*)node)->next= ((struct node*)(*linked_list_node));
+                ((struct node*)node)->previous= NULL;
+                ((struct node*)(*linked_list_node))->previous = ((struct node*)node);
+                (*linked_list_node) = node;
+                return ;
+        }
 
-        ((struct node*)node)->next= ((struct node*)(*head));
+        struct node* aux_ptr = (*(struct node**)(linked_list_node));
+        while(NULL != get_previous_node((void *)aux_ptr))
+                previous_node((void**) &aux_ptr);
 
-        (*head) = node;
+
+        ((struct node*)node)->next= aux_ptr;
+        ((struct node*)node)->previous= NULL;
+        aux_ptr->previous = ((struct node*)node);
+
 
 }
 
@@ -243,7 +259,7 @@ void add_node_to_head(void** head, void* node)
 * ARGUMENTS:
 *
 * ARGUMENT 	        TYPE	        I/O	DESCRIPTION
-* head	                void**	        I/O	pointer to the memory position of the head of the list
+* linked_list_node      void**	        I/O	pointer to the memory position of a node in the list
 * node                  void*	        I	pointer to the memory position of the node to add to the list
 *
 * RETURNS: void
@@ -251,16 +267,16 @@ void add_node_to_head(void** head, void* node)
 *
 *
 *****************************************************************/
-void add_node_to_tail(void** head, void* node)
+void add_node_to_tail(void** linked_list_node, void* node)
 {
         /* LOCAL VARIABLES:
         *  Variable     Type            Description
         *  --------     ----            -----------
         *  aux_ptr      struct node*    auxiliary node to walk through the list         
         */
-        if(NULL == (*head))
+        if(NULL == (*linked_list_node))
         {
-                head = node;
+                linked_list_node = node;
                 return;
         }
         if(NULL == node)
@@ -268,16 +284,13 @@ void add_node_to_tail(void** head, void* node)
                 return;
         }
 
-        struct node* aux_ptr = (*(struct node**)(head));
+        struct node* aux_ptr = (*(struct node**)(linked_list_node));
         while(NULL != get_next_node((void *)aux_ptr))
-        {
-                
                 next_node((void**) &aux_ptr);
 
 
-        }
-
         aux_ptr->next = node;
+        ((struct node*)node)->previous = aux_ptr;
 
         return;
 
@@ -287,51 +300,71 @@ void add_node_to_tail(void** head, void* node)
 *
 * FUNCTION NAME: add_node_in_index_n       
 *
-* PURPOSE: Adds a node to index n of a linked list
+* PURPOSE: Adds a node to index n compared to given node of a linked list
 *
 * ARGUMENTS:
 *
 * ARGUMENT 	        TYPE	        I/O	DESCRIPTION
-* head	                void**	        I/O	pointer to the memory position of the head of the list
+* linked_list_node	void**	        I/O	pointer to the memory position a node in the linked list
 * node                  void*	        I	pointer to the memory position of the node to add to the list
-* position              uint64_t        I       position to add node to the linked list
+* position              int64_t         I       position to add node to the linked list
 *
 * RETURNS: void
 *
 *
 *
 *****************************************************************/
-void add_node_in_index_n(void** head, void* node, uint64_t position)
+void add_node_in_index_n(void** linked_list_node, void* node, int64_t position)
 {
         /* LOCAL VARIABLES:
         *  Variable     Type            Description
         *  --------     ----            -----------
         *  aux_ptr      struct node*    auxiliary node to walk through the list         
         */        
-        if(NULL == (*head))
+        if(NULL == (*linked_list_node))
         {
-                head = node;
+                linked_list_node = node;
                 return;
         }
         if(NULL == node)
         {
                 return;
         }
-        if(0 == position)
+        else if((NULL == get_previous_node((*linked_list_node))) && (0 >= position))               // given node is head
         {
-                add_node_to_head(head, node);
+                add_node_to_head(linked_list_node, node);
                 return ;
         }
 
-        struct node* aux_ptr = (*(struct node**)(head));
-        while(NULL != get_next_node((void *)aux_ptr) && position>1)                     //has to be 1
+        struct node* aux_ptr = (*(struct node**)(linked_list_node));
+        if(position > 0)
         {
-                next_node((void**) &aux_ptr);
-                position--;
+                while(NULL != get_next_node((void *)aux_ptr) && position>0)                     //has to be 1
+                {
+                        next_node((void**) &aux_ptr);
+                        position--;
+                }
+
+        }
+        else if(position < 0)
+        {
+                while(NULL != get_previous_node((void *)aux_ptr) && position<0)                     //has to be 1
+                {
+                        previous_node((void**) &aux_ptr);
+                        position++;
+                }
         }
 
-        ((struct node*)node)->next= aux_ptr->next;
-        aux_ptr->next =((struct node*)node);
+
+        ((struct node*)(*linked_list_node))->previous->next = ((struct node*)node);
+        ((struct node*)node)->previous = ((struct node*)(*linked_list_node))->previous;
+        ((struct node*)(*linked_list_node))->previous = ((struct node*)node);
+        ((struct node*)node)->next= ((struct node*)(*linked_list_node));
+        
+
+
+        if((*linked_list_node) == aux_ptr)
+                (*linked_list_node) = node;                                                     // depending on wanted implementation, this should be commented                                                      
         
 
         return;
@@ -346,7 +379,7 @@ void add_node_in_index_n(void** head, void* node, uint64_t position)
 * ARGUMENTS:
 *
 * ARGUMENT 	        TYPE	        I/O	DESCRIPTION
-* head	                void**	        I/O	pointer to the memory position of the head of the list
+* linked_list_node	void**	        I/O	pointer to the memory position a node in the linked list
 *
 *
 * RETURNS: void
@@ -354,22 +387,32 @@ void add_node_in_index_n(void** head, void* node, uint64_t position)
 *
 *
 *****************************************************************/
-void remove_head_node(void** head)
+void remove_head_node(void** linked_list_node)
 {
         /* LOCAL VARIABLES:
         *  Variable     Type            Description
         *  --------     ----            -----------
         *  aux_ptr      struct node*    auxiliary pointer to node to free         
         */        
-        if(NULL == (*head))
+        if(NULL == (*linked_list_node))
         {
                 return;
         }
 
-        struct node* aux_ptr = (*(struct node**)(head));
+        struct node* aux_ptr = (*(struct node**)(linked_list_node));
+        if(NULL == get_previous_node((*linked_list_node)))  
+        {
+                next_node(linked_list_node);
+                free(aux_ptr->data);
+                free(aux_ptr);
+                return;
+        }
 
-        next_node(head);
+        while(NULL == get_previous_node(aux_ptr))
+                previous_node((void**) &aux_ptr);    
 
+
+        aux_ptr->next->previous = NULL;
         free(aux_ptr->data);
         free(aux_ptr);
 
@@ -386,7 +429,7 @@ void remove_head_node(void** head)
 * ARGUMENTS:
 *
 * ARGUMENT 	        TYPE	        I/O	DESCRIPTION
-* head	                void**	        I/O	pointer to the memory position of the head of the list
+* linked_list_node	void**	        I/O	pointer to the memory position a node in the linked list
 *
 *
 * RETURNS: void
@@ -394,38 +437,38 @@ void remove_head_node(void** head)
 *
 *
 *****************************************************************/
-void remove_tail_node(void** head)
+void remove_tail_node(void** linked_list_node)
 {
         /* LOCAL VARIABLES:
         *  Variable     Type            Description
         *  --------     ----            -----------
         *  aux_ptr      struct node*    auxiliary pointer to node to free and for walking through the list         
         */
-        if(NULL == (*head))
+        if(NULL == (*linked_list_node))
         {
-                return;
-        }
-        if(NULL == (*(struct node**)(head))->next)
-        {
-                free((*(struct node**)(head))->data);
-                free((*head));
                 return;
         }
 
-        struct node* aux_ptr = (*(struct node**)(head));
-        while(NULL != get_next_node(get_next_node((void *)aux_ptr)))
+        if(NULL == (*(struct node**)(linked_list_node))->next)
         {
-                
+                (*(struct node**)(linked_list_node))->previous->next = NULL;
+                free((*(struct node**)(linked_list_node))->data);
+                free((*linked_list_node));
+                (*linked_list_node) = NULL;
+                return;
+        }
+
+        struct node* aux_ptr = (*(struct node**)(linked_list_node));
+        while(NULL != get_next_node((void *)aux_ptr))
+        {     
                 next_node((void**) &aux_ptr);
-
-
         }
+
 
         //free(get_value(get_next_node((void *)aux_ptr)));
-        free(aux_ptr->next->data);
-        //free(get_next_node((void *)aux_ptr));
-        free(aux_ptr->next);
-        aux_ptr->next = NULL;
+        aux_ptr->previous->next = NULL;
+        free(aux_ptr->data);
+        free(aux_ptr);
 
         return;
 
@@ -437,55 +480,62 @@ void remove_tail_node(void** head)
 *
 * FUNCTION NAME: remove_node_in_index_n       
 *
-* PURPOSE: removes node at index n of a linked list
+* PURPOSE: removes node at index n compared to given node of a linked list
 *
 * ARGUMENTS:
 *
 * ARGUMENT 	        TYPE	        I/O	DESCRIPTION
-* head	                void**	        I/O	pointer to the memory position of the head of the list
-* position              uint64_t        I       position to remove node in the linked list
+* linked_list_node	void**	        I/O	pointer to the memory position a node in the linked list
+* position              int64_t         I       position to remove node in the linked list
 *
 * RETURNS: void
 *
 *
 *
 *****************************************************************/
-void remove_node_in_index_n(void** head, uint64_t position)
+void remove_node_in_index_n(void** linked_list_node, int64_t position)
 {
         /* LOCAL VARIABLES:
         *  Variable     Type            Description
         *  --------     ----            -----------
         *  aux_ptr      struct node*    auxiliary pointer to node to free and for walking through the list         
         */
-        if(NULL == (*head))
+        if(NULL == (*linked_list_node))
         {
                 return;
         }
-        if(0 == position)
+
+        else if((NULL == get_previous_node((*linked_list_node))) && (0 >= position))               // given node is head
         {
-                remove_head_node(head);
+                remove_head_node(linked_list_node);
                 return ;
         }
-
-        struct node* aux_ptr = (*(struct node**)(head));
-        while(NULL != get_next_node((void *)aux_ptr) && position>1)                     //has to be 1
-        {
-                next_node((void**) &aux_ptr);
-                position--;
-        }
-
-        if(NULL == get_next_node((void *)aux_ptr))
-                return ;
-
-        if(1 == position)
-        {
-                struct node* node_to_free = NULL;
-                node_to_free = get_next_node((void *)aux_ptr);
-                aux_ptr->next = node_to_free->next;
         
-                free(node_to_free->data);
-                free(node_to_free);
+
+        struct node* aux_ptr = (*(struct node**)(linked_list_node));
+        if(position > 0)
+        {
+                while(NULL != get_next_node((void *)aux_ptr) && position>0)                     //has to be 1
+                {
+                        next_node((void**) &aux_ptr);
+                        position--;
+                }
+
         }
+        else if(position < 0)
+        {
+                while(NULL != get_previous_node((void *)aux_ptr) && position<0)                     //has to be 1
+                {
+                        previous_node((void**) &aux_ptr);
+                        position++;
+                }
+        }
+
+
+        aux_ptr->previous->next = aux_ptr->next;
+        aux_ptr->next->previous = aux_ptr->previous;
+        free(aux_ptr->data);
+        free(aux_ptr);        
 
         return ;
 }
@@ -550,6 +600,67 @@ void* get_next_node(void* node)
         return ((void *)((struct node*)node)->next);              
 }
 
+
+/******************************************************************
+*
+* FUNCTION NAME: previous_node       
+*
+* PURPOSE: changes pointer to the previous node of that pointer
+*
+* ARGUMENTS:
+*
+* ARGUMENT 	        TYPE	        I/O	DESCRIPTION
+* node	                void**	        I/O	pointer to the memory position of the node
+*
+*
+* RETURNS: void
+*
+*
+*
+*****************************************************************/
+void previous_node(void** node)
+{
+        /* LOCAL VARIABLES:
+        *  Variable        Type    Description
+        *  --------        ----    -----------
+        *  None
+        */
+        (*(struct node**)(node)) = get_previous_node((*(struct node**)(node)));
+        return;
+}
+
+
+/******************************************************************
+*
+* FUNCTION NAME: get_previous_node       
+*
+* PURPOSE: returns a pointer to the previous node of a node
+*
+* ARGUMENTS:
+*
+* ARGUMENT 	        TYPE	        I/O	DESCRIPTION
+* node	                void*	        I	pointer to the memory position of the node
+*
+*
+* RETURNS: void* (memory position of the previous node to the given node )
+*
+*
+*
+*****************************************************************/
+void* get_previous_node(void* node)
+{
+        /* LOCAL VARIABLES:
+        *  Variable        Type    Description
+        *  --------        ----    -----------
+        *  None
+        */        
+        if(NULL == node)
+                return NULL;
+
+        return ((void *)((struct node*)node)->previous);              
+}
+
+
 /******************************************************************
 *
 * FUNCTION NAME: get_value       
@@ -590,30 +701,35 @@ void* get_value(void* node)
 * ARGUMENTS:
 *
 * ARGUMENT 	        TYPE	        I/O	DESCRIPTION
-* head	                void*	        I	pointer to the memory position of the head of the list
-* position              uint64_t        I       position of the node to return value
+* linked_list_node	void**	        I/O	pointer to the memory position a node in the linked list
+* position              int64_t         I       position of the node to return value
 *
 * RETURNS: void* (pointer to the memory position of the value in the node at index n)
 *
 *
 *
 *****************************************************************/
-void* get_value_in_index_n(void* head, uint64_t n)
+void* get_value_in_index_n(void* linked_list_node, int64_t n)
 {
         /* LOCAL VARIABLES:
         *  Variable     Type            Description
         *  --------     ----            -----------
         *  aux_ptr      struct node*    auxiliary pointer to node for walking through the list         
         */
-        if(NULL == (head))
+        if(NULL == (linked_list_node))
         {
                 return NULL;
         }
 
-        struct node* aux_ptr = ((struct node*)(head));
-        
+        struct node* aux_ptr = ((struct node*)(linked_list_node));
 
-        while(NULL != get_next_node((void *)aux_ptr) && n>0)                  
+        while(NULL != get_previous_node((void *)aux_ptr) && 0 > n)                  
+        {
+                previous_node((void**) &aux_ptr);
+                n++;
+        }       
+
+        while(NULL != get_next_node((void *)aux_ptr) && 0 < n)                  
         {
                 next_node((void**) &aux_ptr);
                 n--;
@@ -621,7 +737,7 @@ void* get_value_in_index_n(void* head, uint64_t n)
 
         if(0 != n)
                 return NULL;
-        
+
         return aux_ptr->data;
 }
 
@@ -637,7 +753,7 @@ void* get_value_in_index_n(void* head, uint64_t n)
 * ARGUMENTS:
 *
 * ARGUMENT 	        TYPE	        I/O	DESCRIPTION
-* head	                void**	        I/O	pointer to the memory position of the head of the list
+* linked_list_node	void**	        I/O	pointer to the memory position a node in the linked list
 *
 *
 * RETURNS: void
@@ -645,21 +761,25 @@ void* get_value_in_index_n(void* head, uint64_t n)
 *
 *
 *****************************************************************/
-void  free_linked_list(void** head)
+void  free_linked_list(void** linked_list_node)
 {
         /* LOCAL VARIABLES:
         *  Variable     Type            Description
         *  --------     ----            -----------
         *  aux_ptr      struct node*    auxiliary pointer to a node to free         
         */  
-        while(NULL != (*head))
+        while(NULL != get_previous_node((*linked_list_node)))
         {
-                struct node* aux_ptr = (*head);
-                (*head) = get_next_node((*head));
+                (*linked_list_node) = get_previous_node((*linked_list_node));
+        }
+        while(NULL != (*linked_list_node))
+        {
+                struct node* aux_ptr = (*linked_list_node);
+                (*linked_list_node) = get_next_node((*linked_list_node));
                 free(aux_ptr->data);
                 free(aux_ptr);
         }
-        head = NULL;
+        linked_list_node = NULL;
 
         return ;
 }
