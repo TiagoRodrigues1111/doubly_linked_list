@@ -463,6 +463,17 @@ void remove_tail_node(void** linked_list_node)
                 return;
         }
 
+        if((NULL == get_previous_node((*linked_list_node))) && (NULL == get_next_node((*linked_list_node))))
+        {
+                (*(struct node**)(linked_list_node))->next = NULL;
+                (*(struct node**)(linked_list_node))->previous = NULL;
+
+                free((*(struct node**)(linked_list_node))->data);
+                free((*linked_list_node));
+                (*linked_list_node) = NULL;
+                return;
+        }
+
         if(NULL == (*(struct node**)(linked_list_node))->next)
         {
                 (*(struct node**)(linked_list_node))->previous->next = NULL;
@@ -474,7 +485,7 @@ void remove_tail_node(void** linked_list_node)
 
         struct node* aux_ptr = (*(struct node**)(linked_list_node));
         while(NULL != get_next_node((void *)aux_ptr))
-        {     
+        {
                 next_node((void**) &aux_ptr);
         }
 
@@ -546,8 +557,11 @@ void remove_node_in_index_n(void** linked_list_node, int64_t position)
         }
         if(position == 0)
         {
-                aux_ptr->previous->next = aux_ptr->next;
-                aux_ptr->next->previous = aux_ptr->previous;
+                if(aux_ptr->previous != NULL)
+                        aux_ptr->previous->next = aux_ptr->next;
+                if(aux_ptr->next != NULL)
+                        aux_ptr->next->previous = aux_ptr->previous;
+                        
                 free(aux_ptr->data);
                 free(aux_ptr);        
         }
