@@ -29,9 +29,8 @@
 * ASSUMPTIONS, CONSTRAINTS, RESTRICTIONS:                                                                       
 * It is assumed that the list is less than 2^64 elements, for input at                                          
 *  a especific position operations          
-* It is assumed for list insertion that it starts at index 0,and if n is larger than the list,
-*  it is added to the end  
-                                                                                                                
+*
+*                                                                    
 * NOTES:                                                                                                        
 * If more that 2^64 is needed, use arbitrary-precision arithmetic libs                                  
 *                                       
