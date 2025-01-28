@@ -221,7 +221,7 @@ void add_node_to_head(void** linked_list_node, void* node)
         */
         if(NULL == (*linked_list_node))
         {
-                linked_list_node = node;
+                (*linked_list_node) = node;
                 return;
         }
         else if(NULL == node)
@@ -275,7 +275,7 @@ void add_node_to_tail(void** linked_list_node, void* node)
         */
         if(NULL == (*linked_list_node))
         {
-                linked_list_node = node;
+                (*linked_list_node) = node;
                 return;
         }
         if(NULL == node)
@@ -322,7 +322,7 @@ void add_node_in_index_n(void** linked_list_node, void* node, int64_t position)
         */        
         if(NULL == (*linked_list_node))
         {
-                linked_list_node = node;
+                (*linked_list_node) = node;
                 return;
         }
         if(NULL == node)
