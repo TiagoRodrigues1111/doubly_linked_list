@@ -139,14 +139,20 @@ void create_node(void** node)
         *  --------        ----    -----------
         *  None
         */
+        if(NULL == node)
+        {
+                fprintf(stderr, "node pointer is null\n");
+                return ;
+        }
         (*node) = malloc(1*sizeof(struct node));
         if(NULL == (*node))
         {
-                fprintf(stderr, "Memory allocation failed\n");
+                perror("Memory allocation failed");
                 return ;
         }
         (*(struct node **)(node))->next = NULL;
         (*(struct node **)(node))->previous = NULL;
+        (*(struct node **)(node))->data = NULL;
         return ;
 }
 
@@ -186,7 +192,8 @@ void give_node_value(void* node, void *value1, uint64_t size_of_datatype)
 
         if(NULL == ((struct node*)node)->data)
         {
-                fprintf(stderr, "Memory allocation failed\n");
+                perror("Memory allocation failed");
+                return ;
         }
 
         memcpy(((struct node*)node)->data, value1, size_of_datatype);
@@ -219,6 +226,11 @@ void add_node_to_head(void** linked_list_node, void* node)
         *  --------     ----            -----------
         *  aux_ptr      struct node*    auxiliary node to walk through the list      
         */
+        if(NULL == linked_list_node)
+        {
+                fprintf(stderr, "linked_list_node pointer is null\n");
+                return ;
+        }
         if(NULL == (*linked_list_node))
         {
                 (*linked_list_node) = node;
@@ -228,7 +240,7 @@ void add_node_to_head(void** linked_list_node, void* node)
         {
                 return;
         }
-        else if(NULL == get_previous_node((*linked_list_node)))               // given node is head
+        else if(NULL == get_previous_node((*linked_list_node)))               // given linked_list_node is head
         {
                 ((struct node*)node)->next= ((struct node*)(*linked_list_node));
                 ((struct node*)node)->previous= NULL;
@@ -273,6 +285,11 @@ void add_node_to_tail(void** linked_list_node, void* node)
         *  --------     ----            -----------
         *  aux_ptr      struct node*    auxiliary node to walk through the list         
         */
+        if(NULL == linked_list_node)
+        {
+                fprintf(stderr, "linked_list_node pointer is null\n");
+                return ;
+        }   
         if(NULL == (*linked_list_node))
         {
                 (*linked_list_node) = node;
@@ -320,6 +337,11 @@ void add_node_in_index_n(void** linked_list_node, void* node, int64_t position)
         *  --------     ----            -----------
         *  aux_ptr      struct node*    auxiliary node to walk through the list         
         */        
+        if(NULL == linked_list_node)
+        {
+                fprintf(stderr, "linked_list_node pointer is null\n");
+                return ;
+        }   
         if(NULL == (*linked_list_node))
         {
                 (*linked_list_node) = node;
@@ -393,6 +415,11 @@ void remove_head_node(void** linked_list_node)
         *  --------     ----            -----------
         *  aux_ptr      struct node*    auxiliary pointer to node to free         
         */        
+        if(NULL == linked_list_node)
+        {
+                fprintf(stderr, "linked_list_node pointer is null\n");
+                return ;
+        }     
         if(NULL == (*linked_list_node))
         {
                 return;
@@ -457,6 +484,11 @@ void remove_tail_node(void** linked_list_node)
         *  --------     ----            -----------
         *  aux_ptr      struct node*    auxiliary pointer to node to free and for walking through the list         
         */
+        if(NULL == linked_list_node)
+        {
+                fprintf(stderr, "linked_list_node pointer is null\n");
+                return ;
+        }   
         if(NULL == (*linked_list_node))
         {
                 return;
@@ -524,6 +556,11 @@ void remove_node_in_index_n(void** linked_list_node, int64_t position)
         *  --------     ----            -----------
         *  aux_ptr      struct node*    auxiliary pointer to node to free and for walking through the list         
         */
+        if(NULL == linked_list_node)
+        {
+                fprintf(stderr, "linked_list_node pointer is null\n");
+                return ;
+        }    
         if(NULL == (*linked_list_node))
         {
                 return;
@@ -592,6 +629,14 @@ void next_node(void** node)
         *  --------        ----    -----------
         *  None
         */
+        if(NULL == node)
+        {
+                return;
+        }
+        if(NULL == (*node))
+        {
+                return;
+        }
         (*(struct node**)(node)) = get_next_node((*(struct node**)(node)));
         return;
 }
@@ -652,6 +697,14 @@ void previous_node(void** node)
         *  --------        ----    -----------
         *  None
         */
+        if(NULL == node)
+        {
+                return;
+        }
+        if(NULL == (*node))
+        {
+                return;
+        }
         (*(struct node**)(node)) = get_previous_node((*(struct node**)(node)));
         return;
 }
@@ -743,7 +796,7 @@ void* get_value_in_index_n(void* linked_list_node, int64_t n)
         *  --------     ----            -----------
         *  aux_ptr      struct node*    auxiliary pointer to node for walking through the list         
         */
-        if(NULL == (linked_list_node))
+        if(NULL == linked_list_node)
         {
                 return NULL;
         }
@@ -795,6 +848,11 @@ void  free_linked_list(void** linked_list_node)
         *  --------     ----            -----------
         *  aux_ptr      struct node*    auxiliary pointer to a node to free         
         */  
+        if(NULL == linked_list_node)
+        {
+                return;
+        }  
+
         while(NULL != get_previous_node((*linked_list_node)))
         {
                 (*linked_list_node) = get_previous_node((*linked_list_node));
