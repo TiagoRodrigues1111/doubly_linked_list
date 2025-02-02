@@ -265,12 +265,13 @@ void double_linked_list_stress_test4()
 
 
 /* Exclusive double linked list test */
-/*
+
 void double_linked_list_stress_test5()
 {
 
         void *head1 = NULL;
         void *node1 = NULL;
+        void *node_in_list = NULL;
         uint16_t data1 = 0;
 
         create_node(&head1);
@@ -282,9 +283,7 @@ void double_linked_list_stress_test5()
         
         while(0 < n)
         {
-                
 
-                
                 if(NULL != get_value(head1))
                 {
                         printf("%lu\n",*((uint16_t*)get_value(head1)));
@@ -299,18 +298,61 @@ void double_linked_list_stress_test5()
 
 
         }
+
+        n = 10;
+        node_in_list = head1;
+        while(0 < n)
+        {
+                next_node(&node_in_list);
+                n--;
+        }
+
+        void* aux_val = NULL;   
+        aux_val = get_value(node_in_list);
+        if(NULL != aux_val)
+        {
+                printf("Node in list val: %lu\n",*((uint16_t*)aux_val));
+        }             
+        
+        aux_val = get_value_in_index_n(node_in_list,50);   
+        if(NULL != aux_val)
+        {
+                printf("Node in list val: %lu\n",*((uint16_t*)aux_val));
+        }  
+
+        
+
+        create_node(&node1);
+        data1 = 10000;
+        give_node_value(node1,(void*) &data1,sizeof(uint16_t));
+
+        // add_node_in_index_n(&node_in_list,node1,-100);
+        // remove_node_in_index_n(&node_in_list,-10);                                   // error because node removed is the same as head1;
+        
+        remove_tail_node(&node_in_list);
+        
+        //remove_head_node(&node_in_list);                                                // error because node removed is the same as head1;
+
+        aux_val = get_value_in_index_n(node_in_list,50);   
+        if(NULL != aux_val)
+        {
+                printf("Node in list val: %lu\n",*((uint16_t*)aux_val));
+        } 
+
+
         while(NULL != head1)
         {
+                //remove_tail_node(&head1);
+                //remove_head_node(&node_in_list);
                 remove_head_node(&head1);
 
 
         }
-
         free_linked_list(&head1);
         
         return;
 }
-*/
+
 
 
 void tutorial()
@@ -380,8 +422,8 @@ int main()
 //        double_linked_list_stress_test1();
 //        double_linked_list_stress_test2();
 //        double_linked_list_stress_test3();
-        double_linked_list_stress_test4();
-//        double_linked_list_stress_test5();
+//        double_linked_list_stress_test4();
+        double_linked_list_stress_test5();
 
 //        tutorial();
 
