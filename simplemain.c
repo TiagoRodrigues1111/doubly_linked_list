@@ -222,7 +222,7 @@ void double_linked_list_stress_test4()
                 case 2:                                         // add_node_in_index_n
                         create_node(&node1);
                         give_node_value(node1,(void*) &data1,sizeof(uint16_t));      
-                        add_node_in_index_n(&head1,node1, rand() % 4000);
+                        add_node_in_index_n(&head1,node1, (rand() % 4000)-2000);
                         break; 
                 case 3:                                         // remove_head_node
                         remove_head_node(&head1);
@@ -231,7 +231,7 @@ void double_linked_list_stress_test4()
                         remove_tail_node(&head1);
                         break; 
                 case 5:                                         // remove_tail_node
-                        remove_node_in_index_n(&head1,rand() % 400);
+                        remove_node_in_index_n(&head1,(rand() % 400)-200);
                         break; 
                 case 6:                                         // get_value  
                         value_aux = get_value(head1);                               
@@ -241,7 +241,7 @@ void double_linked_list_stress_test4()
                         }
                         break; 
                 case 7:
-                        value_aux = get_value_in_index_n(head1, rand() % 400);     
+                        value_aux = get_value_in_index_n(head1, (rand() % 400)-200);     
                         if(NULL != value_aux)
                         {
                                 printf("%u\n",*((uint16_t*)value_aux));
