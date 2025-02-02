@@ -376,9 +376,9 @@ void add_node_in_index_n(void** linked_list_node, void* node, int64_t position)
                 }
         }
 
-        //if(NULL != ((struct node*)(*linked_list_node))->previous)
-        
-        aux_ptr->previous->next = ((struct node*)node);
+
+        if(NULL != aux_ptr->previous )
+                aux_ptr->previous->next = ((struct node*)node);
         ((struct node*)node)->previous = aux_ptr->previous;
         aux_ptr->previous = ((struct node*)node);
         ((struct node*)node)->next= aux_ptr;
