@@ -446,13 +446,14 @@ void remove_head_node(void** linked_list_node)
                 return;
         }
 
-        while(NULL == get_previous_node(aux_ptr))
+        while(NULL != get_previous_node(aux_ptr))
                 previous_node((void**) &aux_ptr);    
 
 
         if(NULL != get_next_node(aux_ptr))
                 aux_ptr->next->previous = NULL;
         
+
 
         free(aux_ptr->data);
         free(aux_ptr);
@@ -506,16 +507,20 @@ void remove_tail_node(void** linked_list_node)
                 return;
         }
 
+        struct node* aux_ptr = (*(struct node**)(linked_list_node));
+
         if(NULL == (*(struct node**)(linked_list_node))->next)
         {
                 (*(struct node**)(linked_list_node))->previous->next = NULL;
-                free((*(struct node**)(linked_list_node))->data);
-                free((*linked_list_node));
-                (*linked_list_node) = NULL;
+                
+                previous_node(linked_list_node);
+                free(aux_ptr->data);
+                free(aux_ptr);
+                // (*linked_list_node) = NULL;
                 return;
         }
 
-        struct node* aux_ptr = (*(struct node**)(linked_list_node));
+        aux_ptr = (*(struct node**)(linked_list_node));
         while(NULL != get_next_node((void *)aux_ptr))
         {
                 next_node((void**) &aux_ptr);
@@ -598,9 +603,20 @@ void remove_node_in_index_n(void** linked_list_node, int64_t position)
                         aux_ptr->previous->next = aux_ptr->next;
                 if(aux_ptr->next != NULL)
                         aux_ptr->next->previous = aux_ptr->previous;
-                        
+                
+                if(aux_ptr == (*(struct node**)(linked_list_node)))
+                {
+                        next_node(linked_list_node);
+                }
+                
+                aux_ptr->next = NULL;
+                aux_ptr->previous = NULL;               
+
                 free(aux_ptr->data);
-                free(aux_ptr);        
+                aux_ptr->data = NULL;
+                free(aux_ptr);
+                
+                        
         }
         return ;
 }
