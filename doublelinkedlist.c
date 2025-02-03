@@ -44,7 +44,7 @@
 * 27-01-2025    Tiago Rodrigues                               1         Creation of the repository as well 
 *                                                                        as implementation of functions and
 *                                                                        update of functions from singly linked list
-*
+* 03-02-2025    Tiago Rodrigues                               1         Added fix to data being NULL bug   
 *                                                                                                              
 * ALGORITHM (PDL)
 *    
@@ -185,6 +185,11 @@ void give_node_value(void* node, void *value1, uint64_t size_of_datatype)
         if(NULL == node)
         {
                 fprintf(stderr, "Node mem location is null\n");
+                return ;
+        }
+        if(NULL == value1)
+        {
+                fprintf(stderr, "Data pointer is null\n");
                 return ;
         }
 
